@@ -9,6 +9,12 @@ import projects.entity.Project;
 import projects.exception.DbException;
 import provided.util.DaoBase;
 
+/**
+ * 
+ * This Data access layer which will interact with database for CRUD operations
+ *
+ */
+
 public class ProjectDao extends DaoBase {
 	
 	private static final String CATEGORY_TABLE="category";
@@ -17,6 +23,11 @@ public class ProjectDao extends DaoBase {
 	private static final String PROJECT_CATEGORY_TABLE="project_category";
 	private static final String STEP_TABLE="step";
 	
+	/**
+	 * This method will insert data into the project table
+	 * @param project
+	 * @return Project
+	 */
 	public Project insertProject(Project project) {
 		// @formatter:off
 		String sql = ""
