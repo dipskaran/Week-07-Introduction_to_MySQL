@@ -5,7 +5,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import projects.exception.DbException;
-
+/**
+ * This class used to connect to MySql Database
+ * 
+ *
+ */
 public class DbConnection {
 	private static String HOST = "localhost";
 	private static String PASSWORD = "Password1";
@@ -13,7 +17,10 @@ public class DbConnection {
 	private static String SCHEMA="projects";
 	private static String USER="projects";
 	
-	
+	/**
+	 * This method establishes connection with database
+	 * @return Connection
+	 */
 		
 	public static Connection getConnection() {
 		String uri = String.format("jdbc:mysql://%s:%d/%s?user=%s&password=%s", HOST,PORT,SCHEMA,USER,PASSWORD);
