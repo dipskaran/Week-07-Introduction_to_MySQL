@@ -2,6 +2,7 @@ package projects;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -18,11 +19,12 @@ import projects.service.ProjectService;
 public class ProjectsApp {
 	// @formatter:off
 	private List<String> operations = List.of(
-			"1 Add a project"
+			"1) Add a project","2) List projects","3) Select a project"
 	);
 	// @formatter:on
 	private Scanner scanner = new Scanner(System.in);
 	private ProjectService projectService = new ProjectService();
+	Project currProject = new Project();
 	//Entry point for the application
 	public static void main(String[] args) {
 		new ProjectsApp().processUserSelections();
@@ -42,14 +44,40 @@ public class ProjectsApp {
 				case 1:
 					createProject();
 					break;
+				case 2:
+					listProjects();
+					break;
+				case 3:
+					selectProject();
+					break;
 				default:
 					System.out.println("\n "+ selection + " is not a valid selection. Try again.");
 					break;
 				}
-			}catch(Exception ex) {
+			}catch(NoSuchElementException ex) {
 				System.out.println("\nError: "+ex+" Try again.");
 			}
 		}
+	}
+	private void selectProject() {
+		listProjects();
+		
+		Integer projectId=getIntInput("Enter a project ID to select a project");
+		
+		currProject = null;
+		
+		currProject = projectService.fetchProjectById(projectId);
+		
+	}
+	private void listProjects() {
+		List<Project> projects = projectService.fetchAllProjects();
+		
+		System.out.println("\nProjects:");
+		
+		projects.forEach(project -> System.out
+				.println(" " + project.getProjectId()
+						+ ": " + project.getProjectName()));
+		
 	}
 	/**
 	 * This method is for saving the project details in the table project
@@ -141,6 +169,12 @@ public class ProjectsApp {
 	private void printOperations() {
 		System.out.println("\nThese are the available selections. Press the Enter key to quit:");
 		operations.forEach(line -> System.out.println(" "+line));
+		
+		if(Objects.isNull(currProject)){
+			System.out.println("\nYou are not working with a project.");
+		}else {
+			System.out.println("\nYou are working with project: " + currProject);
+		}
 		
 	}
 
