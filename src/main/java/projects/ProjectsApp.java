@@ -19,7 +19,7 @@ import projects.service.ProjectService;
 public class ProjectsApp {
 	// @formatter:off
 	private List<String> operations = List.of(
-			"1) Add a project","2) List projects","3) Select a project"
+			"1) Add a project","2) List projects","3) Select a project","4) Update project details","5) Delete a project"
 	);
 	// @formatter:on
 	private Scanner scanner = new Scanner(System.in);
@@ -50,6 +50,12 @@ public class ProjectsApp {
 				case 3:
 					selectProject();
 					break;
+				case 4:
+					updateProjectDetails();
+					break;
+				case 5:
+					deleteProject();
+					break;
 				default:
 					System.out.println("\n "+ selection + " is not a valid selection. Try again.");
 					break;
@@ -59,6 +65,51 @@ public class ProjectsApp {
 			}
 		}
 	}
+	/**
+	 * This method is used to delete projects from database
+	 */
+	private void deleteProject() {
+		listProjects();
+		
+		Integer projectId=getIntInput("Enter a project ID to select a project");
+		
+		projectService.deleteProject(projectId);
+		System.out.println("Project "+projectId+" was deleted successfully");
+		if(Objects.nonNull(currProject) && currProject.getProjectId().equals(projectId)) {
+			currProject=null;
+		}
+		
+		
+	}
+	/**
+	 * This method is used to update and existing row in database
+	 */
+	private void updateProjectDetails() {
+		if(Objects.isNull(currProject)) {
+			System.out.println("\nPlease select a project.");
+		}
+		
+		String projectName = getStringInput("Enter the project name ["+currProject.getProjectName()+"]");
+		BigDecimal estimatedHours = getDecimalInput("Enter the estimated hours ["+currProject.getEstimatedHours()+"]");
+		BigDecimal actualHours = getDecimalInput("Enter the actual hours ["+currProject.getActualHours()+"]");
+		Integer difficult = getIntInput("Enter project difficulty(1-5)  ["+currProject.getDifficulty()+"]");
+		String notes = getStringInput("Enter project notes ["+currProject.getNotes()+"]");
+		
+		Project project = new Project();
+		project.setProjectName(Objects.isNull(projectName)?currProject.getProjectName():projectName);
+		project.setEstimatedHours(Objects.isNull(estimatedHours)?currProject.getEstimatedHours():estimatedHours);
+		project.setActualHours(Objects.isNull(actualHours)?currProject.getActualHours():actualHours);
+		project.setDifficulty(Objects.isNull(difficult)?currProject.getDifficulty():difficult);
+		project.setNotes(Objects.isNull(notes)?currProject.getNotes():notes);
+		project.setProjectId(currProject.getProjectId());
+		
+		projectService.modifyProjectDetails(project);
+		currProject = projectService.fetchProjectById(currProject.getProjectId());
+	}
+	
+	/*
+	 * This method will list a specified project from database
+	 */
 	private void selectProject() {
 		listProjects();
 		
@@ -69,6 +120,9 @@ public class ProjectsApp {
 		currProject = projectService.fetchProjectById(projectId);
 		
 	}
+	/**
+	 * This method is to list all projects from database
+	 */
 	private void listProjects() {
 		List<Project> projects = projectService.fetchAllProjects();
 		
